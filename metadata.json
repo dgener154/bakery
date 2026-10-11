@@ -1,0 +1,7 @@
+{
+  "name": "Bakery House - Online & Management System",
+  "description": "Aplikasi Bakery Online & Sistem Manajemen Operasional Toko Roti Lengkap dengan Pelacakan Batch FEFO, Kasir POS, dan Struk Digital",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

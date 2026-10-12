@@ -152,7 +152,7 @@ export const StockManagement: React.FC<StockManagementProps> = ({
       {/* Tab 1: Rekap Stok per Produk */}
       {activeTab === 'summary' ? (
         <div className="bg-white rounded-2xl border border-[#E8DEC8] shadow-2xs overflow-hidden">
-          <div className="p-4 border-b border-[#F0EBE1] flex items-center justify-between">
+          <div className="p-4 border-b border-[#F0EBE1] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <h3 className="font-bold text-xs uppercase tracking-wider text-[#9A6237]">
               Status Persediaan Layak Jual vs Kedaluwarsa
             </h3>
@@ -161,11 +161,69 @@ export const StockManagement: React.FC<StockManagementProps> = ({
               placeholder="Cari produk..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="px-3 py-1.5 rounded-xl border border-[#DFCBB5] text-xs text-[#3A241D] bg-[#FAF7F2] w-60"
+              className="px-3 py-1.5 rounded-xl border border-[#DFCBB5] text-xs text-[#3A241D] bg-[#FAF7F2] w-full sm:w-60"
             />
           </div>
 
-          <div className="overflow-x-auto">
+          {/* Mobile Cards for Stock (< md) */}
+          <div className="md:hidden divide-y divide-[#F2ECE1]">
+            {products
+              .filter(p => !p.isArchived && p.name.toLowerCase().includes(searchQuery.toLowerCase()))
+              .map(p => {
+                const prodBatches = batches.filter(b => b.productId === p.id);
+                const validBatches = prodBatches.filter(
+                  b => b.remainingQty > 0 && b.status !== 'kedaluwarsa' && b.status !== 'ditarik' && new Date(b.expiryDate).getTime() > now
+                );
+                const expiredBatches = prodBatches.filter(
+                  b => b.status === 'kedaluwarsa' || new Date(b.expiryDate).getTime() <= now
+                );
+
+                const validStock = validBatches.reduce((s, b) => s + b.remainingQty, 0);
+                const expiredStock = expiredBatches.reduce((s, b) => s + b.remainingQty, 0);
+                const isBelowMin = validStock <= p.minStockAlert;
+
+                return (
+                  <div key={p.id} className="p-4 space-y-2 hover:bg-[#FAF7F2] transition-colors">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-sm text-[#3A241D]">{p.name}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        isBelowMin ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'
+                      }`}>
+                        {isBelowMin ? 'Stok Rendah' : 'Stok Aman'}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 text-center text-xs bg-[#FAF7F2] p-2 rounded-xl border border-[#E8DEC8]">
+                      <div>
+                        <span className="text-[10px] text-[#8C6D62] block">Layak Jual</span>
+                        <strong className="text-emerald-700 text-sm font-mono-nums">{validStock} {p.unit}</strong>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-[#8C6D62] block">Kedaluwarsa</span>
+                        <strong className="text-rose-700 text-sm font-mono-nums">{expiredStock} {p.unit}</strong>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-[#8C6D62] block">Batas Min</span>
+                        <span className="text-slate-600 font-mono-nums">{p.minStockAlert} {p.unit}</span>
+                      </div>
+                    </div>
+
+                    {validBatches.length > 0 && (
+                      <div className="flex flex-wrap gap-1 pt-1 text-[10px]">
+                        {validBatches.map(b => (
+                          <span key={b.id} className="px-1.5 py-0.5 rounded bg-[#FAF0E4] border border-[#DFCBB5] text-[#8C4F1A] font-mono">
+                            {b.batchCode}: {b.remainingQty} pcs
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+          </div>
+
+          {/* Desktop Table (>= md) */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="border-b border-[#E8DEC8] bg-[#FAF7F2] text-[#8C6D62] uppercase tracking-wider text-[10px]">

@@ -96,9 +96,61 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ customer
         </span>
       </div>
 
-      {/* Customers Table */}
+      {/* Customers Container: Mobile Cards (< md) & Table (>= md) */}
       <div className="bg-white rounded-2xl border border-[#E8DEC8] shadow-2xs overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Mobile View (< md) */}
+        <div className="md:hidden divide-y divide-[#F2ECE1]">
+          {filtered.length === 0 ? (
+            <div className="py-8 text-center text-xs text-[#8C6D62]">
+              Tidak ada pelanggan yang sesuai.
+            </div>
+          ) : (
+            filtered.map(c => (
+              <div key={c.id} className="p-4 space-y-2.5 hover:bg-[#FAF7F2] transition-colors">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-sm text-[#3A241D]">{c.name}</span>
+                  <span className="font-mono-nums font-bold text-xs text-[#B45309]">
+                    {formatRupiah(c.totalSpent)}
+                  </span>
+                </div>
+
+                <div className="text-xs text-[#6B4F43] space-y-1">
+                  <div className="flex items-center gap-1.5 font-mono text-[11px]">
+                    <Phone className="w-3.5 h-3.5 text-[#8D5B36]" />
+                    <span>{c.phone}</span>
+                    {c.email && <span className="text-[#8C6D62]">· {c.email}</span>}
+                  </div>
+                  {c.address && (
+                    <div className="flex items-start gap-1.5 text-[11px] text-[#7A584A]">
+                      <MapPin className="w-3.5 h-3.5 text-[#8D5B36] shrink-0 mt-0.5" />
+                      <span className="line-clamp-2">{c.address}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-[#F2ECE1] text-[11px]">
+                  <span className="text-[#8C6D62]">
+                    Total: <strong className="text-[#3A241D]">{c.totalOrders} pesanan</strong>
+                  </span>
+
+                  <button
+                    onClick={() => {
+                      const cleanPhone = c.phone.replace(/\D/g, '');
+                      const phone = cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone;
+                      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(`Halo Kak ${c.name}, terima kasih telah berbelanja di toko kami!`)}`, '_blank');
+                    }}
+                    className="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold flex items-center gap-1 cursor-pointer min-h-[36px]"
+                  >
+                    <span>Hubungi WA</span>
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Desktop View (>= md) */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-[#E8DEC8] bg-[#FAF7F2] text-[#8C6D62] uppercase tracking-wider text-[10px]">

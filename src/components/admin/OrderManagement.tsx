@@ -130,9 +130,100 @@ export const OrderManagement: React.FC<OrderManagementProps> = ({
         />
       </div>
 
-      {/* Orders Table */}
+      {/* Orders List Container: Mobile Cards (< md) & Table (>= md) */}
       <div className="bg-white rounded-2xl border border-[#E8DEC8] shadow-2xs overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Mobile View (< md): Intuitive Cards */}
+        <div className="md:hidden divide-y divide-[#F2ECE1]">
+          {filteredOrders.length === 0 ? (
+            <div className="py-8 text-center text-xs text-[#8C6D62]">
+              Tidak ada pesanan yang sesuai filter.
+            </div>
+          ) : (
+            filteredOrders.map(order => {
+              const statusInfo = getOrderStatusLabel(order.orderStatus);
+              const payInfo = getPaymentStatusLabel(order.paymentStatus);
+
+              return (
+                <div key={order.id} className="p-4 space-y-3 hover:bg-[#FAF7F2] transition-colors">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded-md bg-[#FAF0E4] text-[#8C4F1A] font-bold text-xs font-mono" title="Nomor Urut Antrean">
+                        #{order.queueNumber || 1}
+                      </span>
+                      <span className="font-mono font-bold text-xs text-[#3A241D]">{order.orderNumber}</span>
+                    </div>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${statusInfo.color}`}>
+                      {statusInfo.label}
+                    </span>
+                  </div>
+
+                  <div className="flex items-start justify-between gap-2 text-xs">
+                    <div>
+                      <span className="font-bold text-[#3A241D] block">{order.customerName}</span>
+                      <span className="text-[11px] text-[#8C6D62]">{order.customerPhone}</span>
+                      <div className="flex items-center gap-1.5 mt-1 text-[10px] text-[#7A584A]">
+                        <span className="px-1.5 py-0.5 rounded bg-[#FAF6F0] border border-[#E8DEC8] font-semibold">
+                          {order.channel === 'kasir_pos' ? 'POS Toko' : 'Web Online'}
+                        </span>
+                        <span>·</span>
+                        <span>{order.deliveryType === 'delivery' ? 'Kurir Toko' : 'Ambil di Toko'}</span>
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <span className="text-[10px] text-[#8C6D62] block">Total Belanja</span>
+                      <span className="font-mono-nums font-bold text-sm text-[#3A241D] block">
+                        {formatRupiah(order.totalAmount)}
+                      </span>
+                      <span className={`px-1.5 py-0.5 rounded text-[9px] font-semibold border inline-block mt-1 ${payInfo.color}`}>
+                        {payInfo.label}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-[#F2ECE1] text-xs">
+                    <span className="text-[10px] text-[#8C6D62]">
+                      {formatDateTimeIndo(order.createdAt)}
+                    </span>
+
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => setSelectedOrder(order)}
+                        className="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-[#5C453C] hover:bg-[#FAF0E4] border border-[#DFCBB5] flex items-center gap-1 cursor-pointer min-h-[36px]"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Detail</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          const r = receipts.find(rcp => rcp.orderId === order.id || rcp.orderNumber === order.orderNumber);
+                          if (r) onOpenReceipt(r);
+                          else alert('Struk belum tersedia.');
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-[#8D5B36] hover:bg-[#FAF0E4] border border-[#DFCBB5] flex items-center gap-1 cursor-pointer min-h-[36px]"
+                      >
+                        <Receipt className="w-3.5 h-3.5" />
+                        <span>Struk</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleSendWhatsApp(order)}
+                        className="p-1.5 rounded-lg text-[#16A34A] hover:bg-emerald-50 border border-emerald-200 cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                        title="Kirim WhatsApp"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Desktop View (>= md): Full Data Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-[#E8DEC8] bg-[#FAF7F2] text-[#8C6D62] uppercase tracking-wider text-[10px]">

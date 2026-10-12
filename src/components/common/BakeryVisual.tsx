@@ -32,7 +32,7 @@ interface BakeryVisualProps {
   type: ProductVisualType;
   imageUrl?: string;
   className?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'card';
   alt?: string;
 }
 
@@ -48,9 +48,10 @@ export const BakeryVisual: React.FC<BakeryVisualProps> = ({
 
   const sizeClasses = {
     sm: 'w-12 h-12',
-    md: 'w-full h-48',
-    lg: 'w-full h-72',
-    xl: 'w-full h-96',
+    card: 'w-full aspect-[4/3] sm:aspect-auto sm:h-44 md:h-48',
+    md: 'w-full h-40 sm:h-48',
+    lg: 'w-full h-64 sm:h-72',
+    xl: 'w-full h-80 sm:h-96',
   }[size];
 
   // Primary image URL resolution: explicit prop -> primary default photo -> backup photo

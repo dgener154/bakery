@@ -202,10 +202,10 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
       </div>
 
       {/* Sub Filter Segmented Controls */}
-      <div className="flex items-center gap-2 mb-8 bg-[#EFE5D7] p-1.5 rounded-xl w-fit border border-[#DFCBB5]">
+      <div className="flex items-center gap-2 mb-6 sm:mb-8 bg-[#EFE5D7] p-1 sm:p-1.5 rounded-xl w-full sm:w-fit overflow-x-auto no-scrollbar border border-[#DFCBB5]">
         <button
           onClick={() => setFilterMode('all')}
-          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap shrink-0 ${
             filterMode === 'all' ? 'bg-white text-[#3A241D] shadow-xs' : 'text-[#6B4F43] hover:text-[#3A241D]'
           }`}
         >
@@ -213,7 +213,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
         </button>
         <button
           onClick={() => setFilterMode('fresh_today')}
-          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
             filterMode === 'fresh_today' ? 'bg-[#D97706] text-white shadow-xs' : 'text-[#6B4F43] hover:text-[#3A241D]'
           }`}
         >
@@ -222,7 +222,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
         </button>
         <button
           onClick={() => setFilterMode('promo')}
-          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap shrink-0 ${
             filterMode === 'promo' ? 'bg-[#991B1B] text-white shadow-xs' : 'text-[#6B4F43] hover:text-[#3A241D]'
           }`}
         >
@@ -230,7 +230,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
         </button>
         <button
           onClick={() => setFilterMode('preorder')}
-          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap shrink-0 ${
             filterMode === 'preorder' ? 'bg-[#4338CA] text-white shadow-xs' : 'text-[#6B4F43] hover:text-[#3A241D]'
           }`}
         >
@@ -258,7 +258,8 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        /* Multi-column Grid: 4 items per row on mobile (2 cols on very small screens, 4 cols on standard screens/tablets, 5 cols on larger displays) */
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-4 lg:gap-5">
           {filteredProducts.map(product => {
             const meta = productMetaMap.get(product.id);
             const stock = meta?.totalStock || 0;
@@ -269,7 +270,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
             return (
               <div
                 key={product.id}
-                className="group bg-white rounded-2xl border border-[#E8DEC8] hover:border-[#D5BFA4] shadow-xs hover:shadow-md transition-all flex flex-col overflow-hidden"
+                className="group bg-white rounded-xl sm:rounded-2xl border border-[#E8DEC8] hover:border-[#D5BFA4] shadow-2xs hover:shadow-md transition-all flex flex-col overflow-hidden"
               >
                 {/* Visual Area with Real Photographic Image */}
                 <div className="relative overflow-hidden cursor-pointer" onClick={() => onSelectProduct(product)}>
@@ -277,122 +278,120 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                     type={product.visualType}
                     imageUrl={product.imageUrl}
                     alt={product.name}
-                    size="md"
+                    size="card"
                     className="group-hover:scale-105 transition-transform duration-300"
                   />
                   
                   {/* Subtle badges (top left and right) */}
-                  <div className="absolute top-3 left-3 flex flex-col gap-1 items-start">
+                  <div className="absolute top-1.5 sm:top-2.5 left-1.5 sm:left-2.5 flex flex-col gap-1 items-start">
                     {meta?.isBakedToday && (
-                      <span className="px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wide uppercase bg-[#D97706] text-white shadow-xs">
-                        Fresh Today
+                      <span className="px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold tracking-wide uppercase bg-[#D97706] text-white shadow-2xs">
+                        Fresh
                       </span>
                     )}
                     {product.promoPrice && product.promoPrice > 0 && (
-                      <span className="px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wide uppercase bg-[#B91C1C] text-white shadow-xs">
+                      <span className="px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold tracking-wide uppercase bg-[#B91C1C] text-white shadow-2xs">
                         Promo
                       </span>
                     )}
                     {product.isPreOrder && (
-                      <span className="px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wide uppercase bg-[#4338CA] text-white shadow-xs">
-                        Pre-Order
+                      <span className="px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold tracking-wide uppercase bg-[#4338CA] text-white shadow-2xs">
+                        PO
                       </span>
                     )}
                   </div>
 
                   {/* Stock pill */}
-                  <div className="absolute top-3 right-3">
+                  <div className="absolute top-1.5 sm:top-2.5 right-1.5 sm:right-2.5">
                     {isOutOfStock ? (
-                      <span className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-rose-100 text-rose-800 border border-rose-200">
+                      <span className="px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-[11px] font-semibold bg-rose-100 text-rose-800 border border-rose-200">
                         Habis
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-white/95 backdrop-blur-xs text-[#5C453C] border border-[#DFCBB5] font-mono-nums">
-                        Sisa {stock} {product.unit}
+                      <span className="px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-[11px] font-semibold bg-white/95 backdrop-blur-xs text-[#5C453C] border border-[#DFCBB5] font-mono-nums">
+                        Sisa {stock}
                       </span>
                     )}
                   </div>
                 </div>
 
                 {/* Content Area */}
-                <div className="p-4 flex-1 flex flex-col justify-between">
+                <div className="p-2 sm:p-3.5 flex-1 flex flex-col justify-between">
                   <div>
                     {/* Category & Weight */}
-                    <div className="flex items-center gap-1.5 text-[11px] text-[#8C6D62] mb-1">
-                      <span>{category?.name || 'Bakery'}</span>
+                    <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-[#8C6D62] mb-0.5 sm:mb-1 truncate">
+                      <span className="truncate">{category?.name || 'Bakery'}</span>
                       <span aria-hidden="true">·</span>
-                      <span>{product.weightGrams}g / {product.unit}</span>
+                      <span className="shrink-0">{product.weightGrams}g</span>
                     </div>
 
                     {/* Product Title */}
                     <h3
                       onClick={() => onSelectProduct(product)}
-                      className="font-serif-bakery font-bold text-base text-[#3A241D] group-hover:text-[#B45309] transition-colors cursor-pointer line-clamp-1 mb-1.5"
+                      className="font-serif-bakery font-bold text-xs sm:text-sm lg:text-base text-[#3A241D] group-hover:text-[#B45309] transition-colors cursor-pointer line-clamp-1 mb-1"
+                      title={product.name}
                     >
                       {product.name}
                     </h3>
 
-                    {/* Short Description */}
-                    <p className="text-xs text-[#7A584A] line-clamp-2 leading-relaxed mb-3">
+                    {/* Short Description (hidden on ultra compact to maintain neat grid alignment) */}
+                    <p className="text-[11px] sm:text-xs text-[#7A584A] line-clamp-2 leading-snug sm:leading-relaxed mb-2 hidden sm:block">
                       {product.description}
                     </p>
 
                     {/* FEFO Batch Date Info */}
                     {earliest && (
-                      <div className="p-2 rounded-lg bg-[#FAF6F0] border border-[#EFE5D7] mb-3 text-[11px] text-[#6B4F43] flex items-center justify-between">
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="w-3.5 h-3.5 text-[#B45309] shrink-0" />
-                          <span>Exp: {formatDateOnlyIndo(earliest.expiryDate)}</span>
+                      <div className="p-1 sm:p-1.5 rounded-lg bg-[#FAF6F0] border border-[#EFE5D7] mb-2 text-[9px] sm:text-[10px] text-[#6B4F43] flex items-center justify-between">
+                        <div className="flex items-center gap-1 truncate">
+                          <Calendar className="w-3 h-3 text-[#B45309] shrink-0" />
+                          <span className="truncate">Exp: {formatDateOnlyIndo(earliest.expiryDate)}</span>
                         </div>
-                        <span className="font-mono text-[10px] text-[#8C6D62]">
-                          Batch {earliest.batchCode.split('-').slice(-1)[0]}
-                        </span>
                       </div>
                     )}
                   </div>
 
                   {/* Price & Action Button */}
-                  <div className="pt-3 border-t border-[#F2ECE1] flex items-center justify-between gap-2">
-                    <div>
+                  <div className="pt-2 border-t border-[#F2ECE1] flex items-center justify-between gap-1.5">
+                    <div className="min-w-0">
                       {product.promoPrice && product.promoPrice > 0 ? (
                         <div>
-                          <span className="text-[11px] text-slate-400 line-through block font-mono-nums">
+                          <span className="text-[9px] sm:text-[10px] text-slate-400 line-through block font-mono-nums leading-none">
                             {formatRupiah(product.normalPrice)}
                           </span>
-                          <span className="font-bold text-base text-[#B45309] font-mono-nums">
+                          <span className="font-bold text-xs sm:text-sm lg:text-base text-[#B45309] font-mono-nums leading-tight block">
                             {formatRupiah(product.promoPrice)}
                           </span>
                         </div>
                       ) : (
-                        <span className="font-bold text-base text-[#3A241D] font-mono-nums">
+                        <span className="font-bold text-xs sm:text-sm lg:text-base text-[#3A241D] font-mono-nums leading-tight block">
                           {formatRupiah(product.normalPrice)}
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1 shrink-0">
                       <button
                         onClick={() => onSelectProduct(product)}
-                        className="p-2 rounded-xl text-[#5C453C] hover:bg-[#FAF0E4] border border-[#DFCBB5] transition-colors cursor-pointer"
+                        className="p-1.5 sm:p-2 rounded-lg text-[#5C453C] hover:bg-[#FAF0E4] border border-[#DFCBB5] transition-colors cursor-pointer"
                         title="Lihat Detail Produk"
                         aria-label="Lihat Detail Produk"
                       >
-                        <Eye className="w-4 h-4" />
+                        <Eye className="w-3.5 h-3.5" />
                       </button>
 
                       <button
                         onClick={() => handleBuyClick(product, isOutOfStock)}
                         disabled={isOutOfStock}
-                        className={`flex items-center gap-1 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                        className={`flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${
                           isOutOfStock
                             ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
                             : !storeStatus.isOpen
-                            ? 'bg-[#8D5B36]/80 hover:bg-[#8D5B36] text-white shadow-xs'
-                            : 'bg-[#8D5B36] hover:bg-[#724524] text-white shadow-xs'
+                            ? 'bg-[#8D5B36]/80 hover:bg-[#8D5B36] text-white shadow-2xs'
+                            : 'bg-[#8D5B36] hover:bg-[#724524] text-white shadow-2xs'
                         }`}
                       >
-                        <Plus className="w-3.5 h-3.5" />
-                        <span>Beli</span>
+                        <Plus className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                        <span className="hidden sm:inline">Beli</span>
                       </button>
                     </div>
                   </div>

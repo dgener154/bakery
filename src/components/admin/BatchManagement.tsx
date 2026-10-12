@@ -178,9 +178,89 @@ export const BatchManagement: React.FC<BatchManagementProps> = ({
         />
       </div>
 
-      {/* Batches Table */}
+      {/* Batches Container: Mobile Cards (< md) & Table (>= md) */}
       <div className="bg-white rounded-2xl border border-[#E8DEC8] shadow-2xs overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Mobile View (< md) */}
+        <div className="md:hidden divide-y divide-[#F2ECE1]">
+          {filteredBatches.length === 0 ? (
+            <div className="py-8 text-center text-xs text-[#8C6D62]">
+              Tidak ada batch produksi yang sesuai filter.
+            </div>
+          ) : (
+            filteredBatches.map(batch => {
+              const prod = products.find(p => p.id === batch.productId);
+              const statusInfo = getBatchStatusLabel(batch.status);
+              const isBlocked = batch.status === 'kedaluwarsa' || batch.status === 'ditarik';
+
+              return (
+                <div key={batch.id} className="p-4 space-y-3 hover:bg-[#FAF7F2] transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="font-mono font-bold text-xs text-[#3A241D] block">
+                        {batch.batchCode}
+                      </span>
+                      <span className="font-semibold text-xs text-[#5C453C]">
+                        {prod?.name || batch.productId}
+                      </span>
+                    </div>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${statusInfo.bgClass} ${statusInfo.textClass} ${statusInfo.borderClass}`}
+                    >
+                      {statusInfo.label}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-[11px] bg-[#FAF7F2] p-2.5 rounded-xl border border-[#E8DEC8]">
+                    <div>
+                      <span className="text-[#8C6D62] block">Tgl Kedaluwarsa:</span>
+                      <span className={`font-semibold ${batch.status === 'kedaluwarsa' ? 'text-rose-700 font-bold' : 'text-[#3A241D]'}`}>
+                        {formatDateTimeIndo(batch.expiryDate)}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[#8C6D62] block">Stok Sisa / Awal:</span>
+                      <span className="font-mono-nums font-bold text-[#3A241D]">
+                        {batch.remainingQty} <span className="text-[#8C6D62] font-normal">/ {batch.initialQty} pcs</span>
+                      </span>
+                      <span className="text-emerald-700 font-semibold block text-[10px]">
+                        Terjual: {batch.soldQty} pcs
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-1 text-[11px]">
+                    <span className="text-[#8C6D62]">
+                      Petugas: <strong>{batch.staffName}</strong>
+                    </span>
+
+                    <div className="flex items-center gap-1.5">
+                      {batch.status !== 'ditarik' && batch.remainingQty > 0 && (
+                        <button
+                          onClick={() => handleWithdrawBatch(batch.id)}
+                          className="px-2.5 py-1.5 rounded-lg border border-amber-300 bg-amber-50 text-amber-900 font-semibold hover:bg-amber-100 transition-colors cursor-pointer min-h-[36px]"
+                        >
+                          Tarik
+                        </button>
+                      )}
+
+                      {batch.remainingQty > 0 && (
+                        <button
+                          onClick={() => handleRecordWaste(batch)}
+                          className="px-2.5 py-1.5 rounded-lg border border-rose-300 bg-rose-50 text-rose-800 font-semibold hover:bg-rose-100 transition-colors cursor-pointer min-h-[36px]"
+                        >
+                          Catat Afkir
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Desktop View (>= md) */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-[#E8DEC8] bg-[#FAF7F2] text-[#8C6D62] uppercase tracking-wider text-[10px]">

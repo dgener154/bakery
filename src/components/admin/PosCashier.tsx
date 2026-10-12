@@ -40,6 +40,7 @@ export const PosCashier: React.FC<PosCashierProps> = ({
   const [cashTendered, setCashTendered] = useState<number>(0);
   const [posError, setPosError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [mobileTab, setMobileTab] = useState<'catalog' | 'cart'>('catalog');
 
   const now = new Date().getTime();
 
@@ -191,9 +192,41 @@ export const PosCashier: React.FC<PosCashierProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-8.5rem)]">
-      {/* Left Column: Product Selection Grid (7 cols) */}
-      <div className="lg:col-span-7 flex flex-col bg-white rounded-2xl border border-[#E8DEC8] shadow-2xs overflow-hidden">
+    <div className="space-y-4 max-w-7xl mx-auto">
+      {/* Mobile Screen Segmented Switcher (< lg) */}
+      <div className="lg:hidden flex bg-[#EFE5D7] p-1 rounded-2xl border border-[#DFCBB5] gap-1 shadow-2xs">
+        <button
+          onClick={() => setMobileTab('catalog')}
+          className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer min-h-[44px] ${
+            mobileTab === 'catalog'
+              ? 'bg-[#8D5B36] text-white shadow-xs'
+              : 'text-[#6B4F43] hover:bg-[#FAF0E4]'
+          }`}
+        >
+          <Search className="w-3.5 h-3.5" />
+          <span>Katalog ({displayProducts.length})</span>
+        </button>
+        <button
+          onClick={() => setMobileTab('cart')}
+          className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer min-h-[44px] relative ${
+            mobileTab === 'cart'
+              ? 'bg-[#8D5B36] text-white shadow-xs'
+              : 'text-[#6B4F43] hover:bg-[#FAF0E4]'
+          }`}
+        >
+          <ShoppingBag className="w-3.5 h-3.5" />
+          <span>Keranjang Kasir ({posCart.reduce((s, i) => s + i.qty, 0)})</span>
+          {posCart.length > 0 && (
+            <span className="w-2 h-2 rounded-full bg-[#E11D48] absolute top-2 right-3 animate-pulse" />
+          )}
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[calc(100vh-10rem)] lg:h-[calc(100vh-8.5rem)]">
+        {/* Left Column: Product Selection Grid (7 cols) */}
+        <div className={`lg:col-span-7 flex flex-col bg-white rounded-2xl border border-[#E8DEC8] shadow-2xs overflow-hidden ${
+          mobileTab === 'catalog' ? 'flex' : 'hidden lg:flex'
+        }`}>
         {/* Search & Filter Header */}
         <div className="p-4 border-b border-[#F0EBE1] space-y-3 shrink-0">
           <div className="flex items-center justify-between">
@@ -299,7 +332,9 @@ export const PosCashier: React.FC<PosCashierProps> = ({
       </div>
 
       {/* Right Column: POS Cart & Payment Panel (5 cols) */}
-      <div className="lg:col-span-5 flex flex-col bg-white rounded-2xl border border-[#E8DEC8] shadow-2xs overflow-hidden">
+      <div className={`lg:col-span-5 flex flex-col bg-white rounded-2xl border border-[#E8DEC8] shadow-2xs overflow-hidden ${
+        mobileTab === 'cart' ? 'flex' : 'hidden lg:flex'
+      }`}>
         {/* Customer Select */}
         <div className="p-3.5 border-b border-[#F0EBE1] bg-[#FAF7F2] space-y-2 shrink-0">
           <div className="flex items-center justify-between text-xs">
@@ -529,6 +564,24 @@ export const PosCashier: React.FC<PosCashierProps> = ({
           </button>
         </div>
       </div>
+      </div>
+
+      {/* Floating Bottom Bar on Mobile when on Catalog Tab & Cart is not empty */}
+      {mobileTab === 'catalog' && posCart.length > 0 && (
+        <div className="lg:hidden fixed bottom-16 left-3 right-3 z-30 p-3 bg-white/95 backdrop-blur-md rounded-2xl border border-[#DFCBB5] shadow-2xl flex items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-2 duration-150">
+          <div>
+            <span className="text-[10px] text-[#8C6D62] font-semibold block">Total Keranjang ({posCart.reduce((s, i) => s + i.qty, 0)} item)</span>
+            <span className="font-mono-nums font-bold text-sm text-[#B45309]">{formatRupiah(subtotal)}</span>
+          </div>
+          <button
+            onClick={() => setMobileTab('cart')}
+            className="px-4 py-2.5 rounded-xl bg-[#8D5B36] hover:bg-[#724524] text-white font-bold text-xs shadow-md shadow-[#8D5B36]/20 flex items-center gap-1.5 cursor-pointer active:scale-95"
+          >
+            <span>Bayar di Kasir</span>
+            <ShoppingBag className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

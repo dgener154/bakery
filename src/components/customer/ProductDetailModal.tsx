@@ -233,14 +233,17 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               <button
                 onClick={handleAdd}
                 disabled={isOutOfStock}
-                className={`flex-1 sm:flex-initial px-6 py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer ${
+                className={`flex-1 sm:flex-initial px-6 py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer min-h-[48px] active:scale-98 ${
                   isOutOfStock
                     ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
                     : 'bg-[#8D5B36] hover:bg-[#724524] text-white shadow-[#8D5B36]/20'
                 }`}
               >
                 <ShoppingBag className="w-4 h-4" />
-                <span>{isOutOfStock ? 'Stok Habis' : 'Tambah ke Keranjang'}</span>
+                <span className="sm:inline hidden">{isOutOfStock ? 'Stok Habis' : 'Tambah ke Keranjang'}</span>
+                <span className="sm:hidden inline">
+                  {isOutOfStock ? 'Stok Habis' : `+ Keranjang (${formatRupiah(unitPrice * qty)})`}
+                </span>
               </button>
             </div>
           </div>

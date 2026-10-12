@@ -214,9 +214,94 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({
         />
       </div>
 
-      {/* Products Table */}
+      {/* Products Container: Mobile Cards (< md) & Table (>= md) */}
       <div className="bg-white rounded-2xl border border-[#E8DEC8] shadow-2xs overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Mobile View (< md) */}
+        <div className="md:hidden divide-y divide-[#F2ECE1]">
+          {filtered.length === 0 ? (
+            <div className="py-8 text-center text-xs text-[#8C6D62]">
+              Tidak ada produk ditemukan.
+            </div>
+          ) : (
+            filtered.map(p => {
+              const cat = categories.find(c => c.id === p.categoryId);
+              return (
+                <div key={p.id} className="p-4 space-y-3 hover:bg-[#FAF7F2] transition-colors">
+                  <div className="flex items-start gap-3">
+                    <div className="w-14 h-14 rounded-xl overflow-hidden border border-[#E8DEC8] shrink-0">
+                      <BakeryVisual
+                        type={p.visualType}
+                        imageUrl={p.imageUrl}
+                        alt={p.name}
+                        size="sm"
+                        className="w-full h-full"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="font-bold text-sm text-[#3A241D] truncate">{p.name}</span>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${
+                          p.isArchived ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-800'
+                        }`}>
+                          {p.isArchived ? 'Diarsipkan' : 'Aktif'}
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-[#8C6D62] block mt-0.5">
+                        {cat?.name || 'Bakery'} · {p.weightGrams}g ({p.unit})
+                      </span>
+                      <div className="flex items-baseline gap-2 mt-1">
+                        {p.promoPrice ? (
+                          <>
+                            <span className="font-mono-nums font-bold text-sm text-[#B45309]">
+                              {formatRupiah(p.promoPrice)}
+                            </span>
+                            <span className="text-slate-400 line-through text-[10px] font-mono-nums">
+                              {formatRupiah(p.normalPrice)}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="font-mono-nums font-bold text-sm text-[#3A241D]">
+                            {formatRupiah(p.normalPrice)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-[#F2ECE1] text-[11px]">
+                    <span className="text-[#8C6D62]">
+                      Simpan: <strong>{p.estimatedShelfDays} hari</strong> · Min: <strong>{p.minStockAlert} pcs</strong>
+                    </span>
+
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => openEditModal(p)}
+                        className="px-3 py-1.5 rounded-lg bg-[#FAF0E4] hover:bg-[#F3E3D1] text-[#8D5B36] font-semibold flex items-center gap-1 cursor-pointer min-h-[36px]"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        onClick={() => toggleArchive(p.id, p.isArchived)}
+                        className={`p-1.5 rounded-lg border cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center ${
+                          p.isArchived
+                            ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
+                            : 'text-slate-500 hover:bg-slate-100 border-slate-200'
+                        }`}
+                        title={p.isArchived ? 'Aktifkan Kembali' : 'Arsipkan'}
+                      >
+                        <Archive className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Desktop View (>= md) */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-[#E8DEC8] bg-[#FAF7F2] text-[#8C6D62] uppercase tracking-wider text-[10px]">

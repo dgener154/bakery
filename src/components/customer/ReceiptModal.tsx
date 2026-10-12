@@ -57,30 +57,30 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ receipt, settings, o
           </div>
 
           {/* Format selector buttons */}
-          <div className="flex items-center gap-1 bg-[#FAF0E4] p-1 rounded-xl border border-[#DFCBB5]">
+          <div className="flex flex-wrap items-center gap-1 bg-[#FAF0E4] p-1 rounded-xl border border-[#DFCBB5]">
             <button
               onClick={() => setPrintFormat('thermal58')}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+              className={`px-2 py-1 text-[11px] sm:text-xs font-semibold rounded-lg transition-colors cursor-pointer min-h-[32px] ${
                 printFormat === 'thermal58' ? 'bg-[#8D5B36] text-white shadow-2xs' : 'text-[#6B4F43] hover:text-[#3A241D]'
               }`}
             >
-              Thermal 58mm
+              58mm
             </button>
             <button
               onClick={() => setPrintFormat('thermal80')}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+              className={`px-2 py-1 text-[11px] sm:text-xs font-semibold rounded-lg transition-colors cursor-pointer min-h-[32px] ${
                 printFormat === 'thermal80' ? 'bg-[#8D5B36] text-white shadow-2xs' : 'text-[#6B4F43] hover:text-[#3A241D]'
               }`}
             >
-              Thermal 80mm
+              80mm
             </button>
             <button
               onClick={() => setPrintFormat('a4')}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+              className={`px-2 py-1 text-[11px] sm:text-xs font-semibold rounded-lg transition-colors cursor-pointer min-h-[32px] ${
                 printFormat === 'a4' ? 'bg-[#8D5B36] text-white shadow-2xs' : 'text-[#6B4F43] hover:text-[#3A241D]'
               }`}
             >
-              Dokumen A4
+              A4
             </button>
           </div>
 
